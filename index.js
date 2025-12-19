@@ -21,21 +21,32 @@ const PORT = process.env.PORT || 3000;
 
 /* ================= FUNÇÕES ================= */
 
-async function enviarMensagem(numero, texto) {
-  await axios.post(
-    ZAPI_URL,
-    {
-      phone: numero,
-      message: texto,
-    },
-    {
+async function enviarMensagem(numero, mensagem) {
+  const payload = {
+    phone: numero,
+    message: mensagem,
+    delayMessage: 10,
+  };
+
+  try {
+    const response = await axios.post(ZAPI_URL, payload, {
       headers: {
         "Content-Type": "application/json",
         "Client-Token": ZAPI_CLIENT_TOKEN,
       },
-    }
-  );
+    });
+
+    console.log("✅ Mensagem enviada Z-API:", response.data);
+  } catch (err) {
+    console.error(
+      "❌ Erro ao enviar mensagem Z-API:",
+      err.response?.status,
+      err.response?.data
+    );
+    throw err;
+  }
 }
+
 
 async function responderComIA(pergunta) {
   const resposta = await axios.post(
