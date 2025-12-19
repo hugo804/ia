@@ -86,49 +86,31 @@ app.post("/webhook", async (req, res) => {
   try {
     console.log("📩 Webhook recebido:", JSON.stringify(req.body));
 
-    // Número do WhatsApp
-    const numero =
-      req.body.phone ||
-      req.body.telefone ||
-      req.body.connectedPhone ||
-      null;
-
-    // Texto da mensagem (Z-API muda o formato)
-    const mensagem =
-      req.body?.text?.message ||
-      req.body?.texto?.mensagem ||
-      req.body?.message ||
-      null;
-
-    const fromMe = req.body.fromMe === true;
-
-    // Validações de segurança
-    if (!numero) {
-      console.log("⚠️ Número não encontrado no payload");
+    // 🔹 Validar estrutura
+    if (!req.body.phone || !req.body.text || !req.body.text.message) {
+      console.log("⚠️ Mensagem inválida, ignorando");
       return res.sendStatus(200);
     }
 
-    if (!mensagem) {
-      console.log("⚠️ Mensagem vazia ou não textual");
-      return res.sendStatus(200);
-    }
+    const telefone = req.body.phone;
+    const mensagemRecebida = req.body.text.message;
 
-    if (fromMe) {
-      return res.sendStatus(200);
-    }
+    console.log("📞 Telefone:", telefone);
+    console.log("💬 Mensagem:", mensagemRecebida);
 
-    // Envia para a IA
-    const respostaIA = await responderComIA(mensagem);
+    // 🔹 IA responde
+    const respostaIA = await responderComIA(mensagemRecebida);
 
-    // Responde no WhatsApp
-    await enviarMensagem(numero, respostaIA);
+    // 🔹 Enviar resposta
+    await enviarMensagem(telefone, respostaIA);
 
     res.sendStatus(200);
-  } catch (erro) {
-    console.error("❌ Erro no webhook:", erro);
-    res.sendStatus(200);
+  } catch (err) {
+    console.error("❌ Erro no webhook:", err.message);
+    res.sendStatus(500);
   }
 });
+
 
 
 
