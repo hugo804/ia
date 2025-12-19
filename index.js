@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
@@ -9,17 +11,14 @@ app.use(express.json());
 
 /* ================= CONFIGURAÇÕES ================= */
 
-require("dotenv").config();
-
 const OPENAI_KEY = process.env.OPENAI_KEY;
-const ZAPI_INSTANCE = "3E13C68CBADED0F246222638C2118353";
-const ZAPI_TOKEN = "Ff81fb672b7da4a3886c4432a0ab66452S";
+const ZAPI_INSTANCE = process.env.ZAPI_INSTANCE;
+const ZAPI_TOKEN = process.env.ZAPI_TOKEN;
 
-const ZAPI_URL = `https://api.z-api.io/instances/3E13C68CBADED0F246222638C2118353/token/E3610A4DC24CF3A91DF4AE81/send-text`;
-
+const ZAPI_URL = `https://api.z-api.io/instances/${ZAPI_INSTANCE}/send-text`;
 
 /* ================= MEMÓRIA (SIMPLES) ================= */
-/* Em produção: banco de dados */
+
 const atendimentos = {};
 
 /* ================= FUNÇÕES ================= */
@@ -39,8 +38,8 @@ async function enviarMensagem(numero, texto) {
         }
       }
     );
-  } catch (err) {
-    console.error("Erro Z-API:", err.response?.data || err.message);
+  } catch (erro) {
+    console.error("Erro Z-API:", erro.response?.data || erro.message);
   }
 }
 
@@ -54,7 +53,7 @@ async function responderComIA(pergunta) {
           role: "system",
           content: `
 Você é um técnico especialista em manutenção de máquinas de pelúcia.
-Responda sempre de forma técnica, objetiva e clara.
+Responda de forma técnica, objetiva e clara.
 Nunca crie menus.
 Nunca ofereça atendimento humano.
 Nunca finalize atendimento.
@@ -90,11 +89,9 @@ app.post("/webhook", async (req, res) => {
     if (deMim === true) return res.sendStatus(200);
     if (!mensagem || !numero) return res.sendStatus(200);
 
-    /* ===== Inicializa atendimento ===== */
+    /* ===== Novo atendimento ===== */
     if (!atendimentos[numero]) {
-      atendimentos[numero] = {
-        estado: ESTADOS.AGUARDANDO_OPCAO
-      };
+      atendimentos[numero] = { estado: ESTADOS.AGUARDANDO_OPCAO };
 
       await enviarMensagem(
         numero,
@@ -112,7 +109,7 @@ Escolha uma opção:
 
     const atendimento = atendimentos[numero];
 
-    /* ===== Regras críticas ===== */
+    /* ===== Bloqueios ===== */
     if (
       atendimento.estado === ESTADOS.ATENDIMENTO_HUMANO ||
       atendimento.estado === ESTADOS.ENCERRADO
@@ -149,10 +146,7 @@ Escolha uma opção:
         return res.sendStatus(200);
       }
 
-      await enviarMensagem(
-        numero,
-        "Opção inválida. Digite um número de 1 a 4."
-      );
+      await enviarMensagem(numero, "Opção inválida. Digite de 1 a 4.");
       return res.sendStatus(200);
     }
 
@@ -161,7 +155,6 @@ Escolha uma opção:
     await enviarMensagem(numero, respostaIA);
 
     return res.sendStatus(200);
-
   } catch (erro) {
     console.error("Erro geral:", erro);
     return res.sendStatus(200);
@@ -173,4 +166,3 @@ Escolha uma opção:
 app.listen(3000, () => {
   console.log("✅ Suporte IA Vendipromax rodando na porta 3000");
 });
-
