@@ -81,25 +81,44 @@ app.post("/ia", async (req, res) => {
     const pergunta = req.body.pergunta;
 
     if (!pergunta) {
-      return res.status(400).json({
-        erro: "Envie o campo 'pergunta' no body"
-      });
+      return res.status(400).json({ erro: "Pergunta não enviada" });
     }
 
-    const respostaIA = await responderComIA(pergunta);
+    const resposta = await axios.post(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content:
+              "Você é um técnico especialista em manutenção de máquinas de pelúcia. Responda de forma técnica, objetiva e clara.",
+          },
+          {
+            role: "user",
+            content: pergunta,
+          },
+        ],
+      },
+      {
+        headers: {
+          Authorization: "Bearer SUA_CHAVE_OPENAI_AQUI",
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    res.json({
-      pergunta,
-      resposta: respostaIA
-    });
+    const textoResposta =
+      resposta.data.choices[0].message.content;
+
+    res.json({ resposta: textoResposta });
+
   } catch (erro) {
     console.error("❌ Erro na rota /ia:", erro.response?.data || erro.message);
-
-    res.status(500).json({
-      erro: "Erro ao consultar a IA"
-    });
+    res.status(500).json({ erro: "Erro ao consultar IA" });
   }
 });
+
 
 /* ================= ROTAS ================= */
 
