@@ -9,7 +9,7 @@ app.use(express.json());
 /* ================= CONFIG FIXA ================= */
 
 // 🔴 COLOQUE OS DADOS REAIS AQUI
-const OPENAI_KEY = "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";
+const OPENAI_KEY = "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";
 
 const ZAPI_URL =
   "https://api.z-api.io/instances/3E13C68CBADED0F246222638C2118353/token/E3610A4DC24CF3A91DF4AE81/send-text";
@@ -79,11 +79,7 @@ async function responderComIA(pergunta) {
 app.post("/ia", async (req, res) => {
   try {
     const pergunta = req.body.pergunta;
-
-    if (!pergunta) {
-      return res.status(400).json({ erro: "Pergunta não enviada" });
-    }
-
+    
     const resposta = await axios.post(
       "https://api.openai.com/v1/chat/completions",
       {
@@ -91,31 +87,24 @@ app.post("/ia", async (req, res) => {
         messages: [
           {
             role: "system",
-            content:
-              "Você é um técnico especialista em manutenção de máquinas de pelúcia. Responda de forma técnica, objetiva e clara.",
+            content: "Você é um técnico especialista em manutenção de máquinas de pelúcia. Responda de forma técnica, objetiva e clara."
           },
-          {
-            role: "user",
-            content: pergunta,
-          },
-        ],
+          { role: "user", content: pergunta }
+        ]
       },
       {
         headers: {
-          Authorization: "Bearer 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",
-          "Content-Type": "application/json",
-        },
+          "Authorization": `Bearer ${OPENAI_KEY}`,
+          "Content-Type": "application/json"
+        }
       }
     );
 
-    const textoResposta =
-      resposta.data.choices[0].message.content;
-
-    res.json({ resposta: textoResposta });
+    res.json({ resposta: resposta.data.choices[0].message.content });
 
   } catch (erro) {
     console.error("❌ Erro na rota /ia:", erro.response?.data || erro.message);
-    res.status(500).json({ erro: "Erro ao consultar IA" });
+    res.status(500).json({ erro: erro.response?.data || erro.message });
   }
 });
 
