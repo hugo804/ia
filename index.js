@@ -32,7 +32,7 @@ async function enviarMensagem(numero, mensagem) {
     const response = await axios.post(ZAPI_URL, payload, {
       headers: {
         "Content-Type": "application/json",
-        "Client-Token": ZAPI_CLIENT_TOKEN,
+        "Client-Token": "Ff81fb672b7da4a3886c4432a0ab66452S",
       },
     });
 
