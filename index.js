@@ -75,16 +75,41 @@ app.post("/webhook", async (req, res) => {
   try {
     console.log("📩 Webhook recebido:", JSON.stringify(req.body));
 
-    const numero = req.body.phone;
-    const mensagem = req.body?.text?.message;
-    const fromMe = req.body.fromMe;
+    // Número do WhatsApp
+    const numero =
+      req.body.phone ||
+      req.body.telefone ||
+      req.body.connectedPhone ||
+      null;
 
-    // Ignora mensagens enviadas pela própria API
-    if (!numero || !mensagem || fromMe) {
+    // Texto da mensagem (Z-API muda o formato)
+    const mensagem =
+      req.body?.text?.message ||
+      req.body?.texto?.mensagem ||
+      req.body?.message ||
+      null;
+
+    const fromMe = req.body.fromMe === true;
+
+    // Validações de segurança
+    if (!numero) {
+      console.log("⚠️ Número não encontrado no payload");
       return res.sendStatus(200);
     }
 
+    if (!mensagem) {
+      console.log("⚠️ Mensagem vazia ou não textual");
+      return res.sendStatus(200);
+    }
+
+    if (fromMe) {
+      return res.sendStatus(200);
+    }
+
+    // Envia para a IA
     const respostaIA = await responderComIA(mensagem);
+
+    // Responde no WhatsApp
     await enviarMensagem(numero, respostaIA);
 
     res.sendStatus(200);
@@ -93,6 +118,7 @@ app.post("/webhook", async (req, res) => {
     res.sendStatus(200);
   }
 });
+
 
 
 /* ================= START ================= */
