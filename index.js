@@ -102,7 +102,7 @@ app.post("/ia", async (req, res) => {
       },
       {
         headers: {
-          Authorization: "Bearer SUA_CHAVE_OPENAI_AQUI",
+          Authorization: "Bearer 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",
           "Content-Type": "application/json",
         },
       }
