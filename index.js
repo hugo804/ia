@@ -67,7 +67,7 @@ async function responderComIA(pergunta) {
     },
     {
       headers: {
-        Authorization: `Bearer ${OPENAI_KEY}`,
+        Authorization: `${OPENAI_KEY}`,
         "Content-Type": "application/json",
       },
     }
