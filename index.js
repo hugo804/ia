@@ -9,12 +9,12 @@ app.use(express.json());
 /* ================= CONFIG FIXA ================= */
 
 // 🔴 COLOQUE OS DADOS REAIS AQUI
-const OPENAI_KEY = "sk-SUA_CHAVE_OPENAI_AQUI";
+const OPENAI_KEY = "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";
 
 const ZAPI_URL =
-  "https://api.z-api.io/instances/SUA_INSTANCIA/token/SEU_TOKEN/send-text";
+  "https://api.z-api.io/instances/3E13C68CBADED0F246222638C2118353/token/E3610A4DC24CF3A91DF4AE81/send-text";
 
-const ZAPI_CLIENT_TOKEN = "SEU_CLIENT_TOKEN_ZAPI";
+const ZAPI_CLIENT_TOKEN = "Ff81fb672b7da4a3886c4432a0ab66452S";
 
 // Porta do Heroku
 const PORT = process.env.PORT || 3000;
