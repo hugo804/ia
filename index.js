@@ -67,7 +67,7 @@ async function responderComIA(pergunta) {
     },
     {
       headers: {
-        Authorization: `${OPENAI_KEY}`,
+        "Authorization": `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`,
         "Content-Type": "application/json",
       },
     }
