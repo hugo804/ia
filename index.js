@@ -9,8 +9,9 @@ app.use(express.json());
 
 /* ================= CONFIGURAÇÕES ================= */
 
-const OPENAI_KEY = process.env.OPENAI_KEY || "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";
+require("dotenv").config();
 
+const OPENAI_KEY = process.env.OPENAI_KEY;
 const ZAPI_INSTANCE = "3E13C68CBADED0F246222638C2118353";
 const ZAPI_TOKEN = "Ff81fb672b7da4a3886c4432a0ab66452S";
 
