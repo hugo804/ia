@@ -76,6 +76,31 @@ async function responderComIA(pergunta) {
   return resposta.data.choices[0].message.content;
 }
 
+app.post("/ia", async (req, res) => {
+  try {
+    const pergunta = req.body.pergunta;
+
+    if (!pergunta) {
+      return res.status(400).json({
+        erro: "Envie o campo 'pergunta' no body"
+      });
+    }
+
+    const respostaIA = await responderComIA(pergunta);
+
+    res.json({
+      pergunta,
+      resposta: respostaIA
+    });
+  } catch (erro) {
+    console.error("❌ Erro na rota /ia:", erro.response?.data || erro.message);
+
+    res.status(500).json({
+      erro: "Erro ao consultar a IA"
+    });
+  }
+});
+
 /* ================= ROTAS ================= */
 
 app.get("/", (req, res) => {
