@@ -15,7 +15,7 @@ const OPENAI_KEY = process.env.OPENAI_KEY;
 const ZAPI_INSTANCE = process.env.ZAPI_INSTANCE;
 const ZAPI_TOKEN = process.env.ZAPI_TOKEN;
 
-const ZAPI_URL = `https://api.z-api.io/instances/${ZAPI_INSTANCE}/send-text`;
+const ZAPI_URL = `https://api.z-api.io/instances/3E13C68CBADED0F246222638C2118353/token/E3610A4DC24CF3A91DF4AE81/send-text`;
 
 /* ================= MEMÓRIA (SIMPLES) ================= */
 
