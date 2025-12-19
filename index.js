@@ -75,9 +75,8 @@ app.post("/webhook", async (req, res) => {
   try {
     console.log("📩 Webhook recebido:", JSON.stringify(req.body));
 
-    // JSON REAL DA Z-API
-    const numero = req.body.telefone;
-    const mensagem = req.body?.texto?.mensagem;
+    const numero = req.body.phone;
+    const mensagem = req.body?.text?.message;
     const fromMe = req.body.fromMe;
 
     // Ignora mensagens enviadas pela própria API
@@ -90,10 +89,11 @@ app.post("/webhook", async (req, res) => {
 
     res.sendStatus(200);
   } catch (erro) {
-    console.error("❌ Erro no webhook:", erro.message);
+    console.error("❌ Erro no webhook:", erro);
     res.sendStatus(200);
   }
 });
+
 
 /* ================= START ================= */
 
